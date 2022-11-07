@@ -8,13 +8,15 @@ namespace ATM
 {
     public class Card
     {
-        public int pin = 0387;
+        public string cardNumber { get; set; }
+        public int pin { get; set;}
+        public bool status {get; set; }
 
-        public int money = 2500;
+        public int money {get; set;}
 
         public int numberOfEvents = 0;
 
-        List<Event> events = new List<Event>(0);
+        List<Event> events = new List<Event>();
 
         
 

@@ -1,4 +1,5 @@
 ﻿using ATM;
+using System.Linq;
 using System.Collections.Generic;
 
 
@@ -20,22 +21,107 @@ Bills phoneBill = new Bills()
     billName = "Phone"
 };
 
-List<Bills> billsToPay = new List<Bills>(2);
+Card cardNumber1 = new Card()
+{
+    cardNumber ="4389 5540 9858 3049",
+    money = 2500,
+    pin = 3049,
+    status = true
+    
+};
+
+Card cardNumber2 = new Card()
+{
+    cardNumber ="4389 5500 4421 7901",
+    money = 200,
+    pin = 8765,
+    status = true
+    
+};
+
+
+Card cardNumber3 = new Card()
+{
+    cardNumber ="4389 5580 6512 3212",
+    money = 2500,
+    pin = 0000,
+    status = false
+    
+};
+
+List<Card> cardsList = new List<Card>();
+cardsList.Add(cardNumber1);
+cardsList.Add (cardNumber2);
+cardsList.Add (cardNumber3);
+
+
+
+List<Bills> billsToPay = new List<Bills>();
 billsToPay.Add(waterBill);
 billsToPay.Add(electricBill);
 billsToPay.Add(phoneBill);
 
+bool continueValidator = true;
+var option ="";
+Card selectedCard = new Card();
 
 
-Console.WriteLine("Hi ! What would you like to do ? Please choose one option : \n 1 - Insert card  \n 2 - Withdraw card \n 3 - Block card ");
+
+
+do { 
+Console.WriteLine("Welcome to our ATM ! You have inserted 3 cards , please choose one :");
+Console.WriteLine();
+
+ foreach (Card item in cardsList)
+	{
+    if(item.status)
+    Console.WriteLine(item.cardNumber + " active");
+	else
+        Console.WriteLine(item.cardNumber + "blocked");
+    }
+
+    do { 
+Console.WriteLine();
+Console.Write("Answer : ");
+option = Console.ReadLine();
+
+    
+switch(option)
+{
+        case "1" : 
+            selectedCard = cardNumber1;
+                   
+            break;
+        case "2" :
+            selectedCard = cardNumber2;
+
+            break;
+        case "3" :
+            selectedCard = cardNumber3;
+            break;
+        default :
+            inputValidation();
+            break;
+       
+}
+        if(cardBlocked(selectedCard))
+            continueValidator = false;
+        } while(continueValidator);
+
+
+
+    continueValidator =true;
+
+    
+
+Console.WriteLine("What would you like to do ? Please choose one option : \n 1 - Other Options (PIN requied)  \n 2 - Withdraw card \n 3 - Block card ");
 Console.WriteLine();
 Console.Write("Answer : ");
 
 
-var option = Console.ReadLine();
+ option = Console.ReadLine();
 Console.WriteLine();
 
-bool cont = true;
 int billsNumber = billsToPay.Count;
 
 var myCard = new Card();
@@ -43,10 +129,10 @@ bool pinValidation = true;
 
 if (option == "1")
 {
-    Console.Write("PIN code : ");
 
     do
     {
+    Console.Write("PIN code : ");
         var pinCode = int.Parse(Console.ReadLine());
 
         if (pinCode == myCard.pin)
@@ -73,9 +159,17 @@ if (option == "1")
         {
             case "1":
                 Console.Write("Please enter the amount you would like to withdraw : $");
-                int moneyToBeWithdraw = int.Parse(Console.ReadLine());
+                int moneyToBeWithdraw;
+                bool success = int.TryParse(Console.ReadLine(), out moneyToBeWithdraw);
+                if(success)
+                {
                 myCard.withdrawMoney(moneyToBeWithdraw);
                 myCard.currentBalance();
+                }
+                else
+                {
+                    Console.WriteLine("Please enter a valid number ! ");
+                }
 
                 validation();
 
@@ -132,7 +226,9 @@ if (option == "1")
 
                 validation();
         }
-    }while(cont);
+    }while(continueValidator);
+
+        continueValidator = true;
     
 }
 else if(option == "2")
@@ -141,11 +237,14 @@ else if(option == "2")
 }else if(option == "3")
 {
     Console.WriteLine("Your card is blocked !");
+    selectedCard.status = false;
 }
 else
 {
     Console.WriteLine("Invalid input ! ");
 }
+
+}while(continueValidator);
 
 
 
@@ -156,7 +255,22 @@ else
     string answer = Console.ReadLine();
 
     if (answer == "no")
-        cont = false;      
+        continueValidator = false;      
  }
+
+void inputValidation()
+{
+    Console.WriteLine("Invalid input , try again !!");
+}
+
+bool cardBlocked(Card cardToBeChecked)
+{
+    if(cardToBeChecked.status)
+        return true;
+    else
+       Console.WriteLine("This card is Blocked !! Please choose another one ");
+
+    return false;
+}
 
 
